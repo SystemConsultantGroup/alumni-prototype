@@ -13,6 +13,8 @@ import NewApply from "./pages/NewApply";
 import NewApplyComplete from "./pages/NewApplyComplete";
 import MainLayout from "./components/MainLayout";
 import AboutPage from "./pages/AboutPage";
+import MembersPage from "./pages/MembersPage";
+import MemberDetailPage from "./pages/MemberDetailPage";
 import MyPage from "./pages/MyPage";
 import IDCardPage from "./pages/IDCardPage";
 import BenefitsPage from "./pages/BenefitsPage";
