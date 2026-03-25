@@ -15,6 +15,10 @@ import MainLayout from "./components/MainLayout";
 import AboutPage from "./pages/AboutPage";
 import MembersPage from "./pages/MembersPage";
 import MemberDetailPage from "./pages/MemberDetailPage";
+import NewsPage from "./pages/NewsPage";
+import NewsDetailPage from "./pages/NewsDetailPage";
+import CommunityPage from "./pages/CommunityPage";
+import CommunityDetailPage from "./pages/CommunityDetailPage";
 import MyPage from "./pages/MyPage";
 import IDCardPage from "./pages/IDCardPage";
 import BenefitsPage from "./pages/BenefitsPage";
@@ -43,8 +47,11 @@ const App = () => (
             <Route path="about" element={<AboutPage />} />
             <Route path="members" element={<MembersPage />} />
             <Route path="members/:id" element={<MemberDetailPage />} />
-            <Route path="news" element={<PlaceholderTab />} />
-            <Route path="community" element={<PlaceholderTab />} />
+            <Route path="news" element={<NewsPage />} />
+            <Route path="news/:id" element={<NewsDetailPage />} />
+            <Route path="community" element={<CommunityPage />} />
+            <Route path="community/club/:id" element={<CommunityDetailPage />} />
+            <Route path="community/research/:id" element={<CommunityDetailPage />} />
             <Route path="business" element={<PlaceholderTab />} />
             <Route path="mypage" element={<MyPage />} />
             <Route path="id-card" element={<IDCardPage />} />
