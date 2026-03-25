@@ -41,7 +41,8 @@ const App = () => (
           <Route path="/main" element={<MainLayout />}>
             <Route index element={<Navigate to="/main/about" replace />} />
             <Route path="about" element={<AboutPage />} />
-            <Route path="members" element={<PlaceholderTab />} />
+            <Route path="members" element={<MembersPage />} />
+            <Route path="members/:id" element={<MemberDetailPage />} />
             <Route path="news" element={<PlaceholderTab />} />
             <Route path="community" element={<PlaceholderTab />} />
             <Route path="business" element={<PlaceholderTab />} />
