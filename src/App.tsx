@@ -19,6 +19,7 @@ import NewsPage from "./pages/NewsPage";
 import NewsDetailPage from "./pages/NewsDetailPage";
 import CommunityPage from "./pages/CommunityPage";
 import CommunityDetailPage from "./pages/CommunityDetailPage";
+import BusinessPage from "./pages/BusinessPage";
 import MyPage from "./pages/MyPage";
 import IDCardPage from "./pages/IDCardPage";
 import BenefitsPage from "./pages/BenefitsPage";
@@ -52,7 +53,7 @@ const App = () => (
             <Route path="community" element={<CommunityPage />} />
             <Route path="community/club/:id" element={<CommunityDetailPage />} />
             <Route path="community/research/:id" element={<CommunityDetailPage />} />
-            <Route path="business" element={<PlaceholderTab />} />
+            <Route path="business" element={<BusinessPage />} />
             <Route path="mypage" element={<MyPage />} />
             <Route path="id-card" element={<IDCardPage />} />
             <Route path="benefits" element={<BenefitsPage />} />
