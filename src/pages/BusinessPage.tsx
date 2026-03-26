@@ -44,7 +44,7 @@ import {
   HeartPulse,
   Building2,
 } from "lucide-react";
-import { MEMBERS } from "@/data/members";
+import { MEMBERS, FILTER_OPTIONS } from "@/data/members";
 import { toast } from "sonner";
 
 const INDUSTRIES = [
