@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Home, Users, Newspaper, MessageSquare, User, LogOut, CreditCard, Gift, ChevronDown } from "lucide-react";
+import { Home, Users, Newspaper, MessageSquare, Briefcase, User, LogOut, Settings, ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
