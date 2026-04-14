@@ -70,6 +70,7 @@ const App = () => (
             <Route path="mypage" element={<MyPage />} />
             <Route path="id-card" element={<IDCardPage />} />
             <Route path="benefits" element={<BenefitsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
