@@ -24,6 +24,7 @@ import BusinessPage from "./pages/BusinessPage";
 import MyPage from "./pages/MyPage";
 import IDCardPage from "./pages/IDCardPage";
 import BenefitsPage from "./pages/BenefitsPage";
+import SettingsPage from "./pages/SettingsPage";
 import PlaceholderTab from "./pages/PlaceholderTab";
 import AdminLayout from "./components/AdminLayout";
 import AdminLogin from "./pages/admin/AdminLogin";
