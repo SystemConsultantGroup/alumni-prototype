@@ -8,7 +8,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-5">
       <div className="w-full max-w-sm text-center animate-fade-in">
-        <div className="mb-10">
+        <div className="mb-12">
           <img
             src={skkuLogo}
             alt="성균관대학교 총동창회"
@@ -19,27 +19,21 @@ const Landing = () => {
           </div>
         </div>
 
-        <div className="space-y-3 mb-8">
+        <div className="space-y-3">
           <Button
             onClick={() => navigate("/login")}
-            className="w-full h-13 text-base font-semibold"
-            size="lg"
+            className="w-full h-12 text-base font-semibold rounded-lg"
           >
             로그인
           </Button>
           <Button
             onClick={() => navigate("/register/verify")}
             variant="outline"
-            className="w-full h-13 text-base font-semibold border-primary text-primary hover:bg-secondary"
-            size="lg"
+            className="w-full h-12 text-base font-semibold rounded-lg border-primary text-primary hover:bg-primary/5"
           >
             회원가입
           </Button>
         </div>
-
-        <p className="text-sm text-muted-foreground">
-          회비 납부자만 이용 가능합니다
-        </p>
       </div>
     </div>
   );
