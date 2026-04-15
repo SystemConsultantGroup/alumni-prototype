@@ -5,11 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
-import RegisterType from "./pages/RegisterType";
 import RegisterVerify from "./pages/RegisterVerify";
 import PaymentCheck from "./pages/PaymentCheck";
 import RegisterSetup from "./pages/RegisterSetup";
-import NewApply from "./pages/NewApply";
 import NewApplyComplete from "./pages/NewApplyComplete";
 import MainLayout from "./components/MainLayout";
 import AboutPage from "./pages/AboutPage";
@@ -49,11 +47,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register/type" element={<RegisterType />} />
           <Route path="/register/verify" element={<RegisterVerify />} />
           <Route path="/register/payment-check" element={<PaymentCheck />} />
           <Route path="/register/setup" element={<RegisterSetup />} />
-          <Route path="/register/new-apply" element={<NewApply />} />
           <Route path="/register/new-apply/complete" element={<NewApplyComplete />} />
           <Route path="/main" element={<MainLayout />}>
             <Route index element={<Navigate to="/main/home" replace />} />

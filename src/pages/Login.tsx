@@ -66,7 +66,7 @@ const Login = () => {
         </button>
         <div>
           <button
-            onClick={() => navigate("/register/type")}
+            onClick={() => navigate("/register/verify")}
             className="text-sm text-primary font-medium hover:underline"
           >
             회원가입
