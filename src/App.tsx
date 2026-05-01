@@ -18,6 +18,7 @@ import NewsPage from "./pages/NewsPage";
 import NewsDetailPage from "./pages/NewsDetailPage";
 import CommunityPage from "./pages/CommunityPage";
 import CommunityDetailPage from "./pages/CommunityDetailPage";
+import CommunityPostDetailPage from "./pages/CommunityPostDetailPage";
 import BusinessPage from "./pages/BusinessPage";
 import MyPage from "./pages/MyPage";
 import IDCardPage from "./pages/IDCardPage";
@@ -64,7 +65,9 @@ const App = () => (
             <Route path="news/:id" element={<NewsDetailPage />} />
             <Route path="community" element={<CommunityPage />} />
             <Route path="community/club/:id" element={<CommunityDetailPage />} />
+            <Route path="community/club/:groupId/post/:postId" element={<CommunityPostDetailPage groupType="club" />} />
             <Route path="community/research/:id" element={<CommunityDetailPage />} />
+            <Route path="community/research/:groupId/post/:postId" element={<CommunityPostDetailPage groupType="research" />} />
             <Route path="business" element={<BusinessPage />} />
             <Route path="mypage" element={<MyPage />} />
             <Route path="id-card" element={<IDCardPage />} />

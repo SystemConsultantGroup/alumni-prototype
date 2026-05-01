@@ -22,7 +22,7 @@ import { useReportStore, selectDeleted } from "@/data/reports";
 import { useBlockedAuthorIds, useIsAuthorNameBlocked } from "@/hooks/useBlockedAuthors";
 import { resolveAuthorId } from "@/lib/currentUser";
 
-const ClubPostCard = ({ post }: { post: ClubPost }) => {
+const ClubPostCard = ({ post, onClick }: { post: ClubPost; onClick: () => void }) => {
   const isBlocked = useIsAuthorNameBlocked(post.author);
   const authorId = resolveAuthorId(post.author);
 
@@ -38,7 +38,18 @@ const ClubPostCard = ({ post }: { post: ClubPost }) => {
   }
 
   return (
-    <Card className="overflow-hidden">
+    <Card
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      className="overflow-hidden cursor-pointer hover:shadow-md hover:border-primary/30 transition-all"
+    >
       <CardContent className="p-4">
         <div className="flex items-start gap-2">
           <h3 className="font-semibold text-foreground text-sm flex-1 line-clamp-1">
@@ -47,13 +58,15 @@ const ClubPostCard = ({ post }: { post: ClubPost }) => {
           {post.hasImage && (
             <ImageIcon className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
           )}
-          <ReportMenu
-            targetKind="communityPost"
-            targetId={post.id}
-            targetSnapshot={{ title: post.title, content: post.content, authorName: post.author }}
-            reportedAuthorMemberId={authorId}
-            triggerSize="sm"
-          />
+          <div onClick={(e) => e.stopPropagation()}>
+            <ReportMenu
+              targetKind="communityPost"
+              targetId={post.id}
+              targetSnapshot={{ title: post.title, content: post.content, authorName: post.author }}
+              reportedAuthorMemberId={authorId}
+              triggerSize="sm"
+            />
+          </div>
         </div>
         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.content}</p>
         <p className="text-xs text-muted-foreground/70 mt-2">
@@ -201,7 +214,13 @@ const CommunityDetailPage = () => {
           {posts.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">등록된 게시글이 없습니다.</p>
           ) : (
-            posts.map((post) => <ClubPostCard key={post.id} post={post} />)
+            posts.map((post) => (
+              <ClubPostCard
+                key={post.id}
+                post={post}
+                onClick={() => navigate(`/main/community/${group.type}/${group.id}/post/${post.id}`)}
+              />
+            ))
           )}
 
           {/* FAB */}

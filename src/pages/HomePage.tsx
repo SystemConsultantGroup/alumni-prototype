@@ -196,7 +196,7 @@ function getRecentCommunityPosts() {
         source: group.name,
         title: post.title,
         date: post.date,
-        link: `${basePath}/${group.id}`,
+        link: `${basePath}/${group.id}/post/${post.id}`,
       });
     });
   });
