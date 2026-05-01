@@ -239,8 +239,8 @@ const BusinessPage = () => {
   // Post detail view
   if (selectedPost) {
     const currentIdx = visiblePosts.findIndex((p) => p.id === selectedPost.id);
-    const prevPost = currentIdx > 0 ? visiblePosts[currentIdx - 1] : null;
-    const nextPost = currentIdx >= 0 && currentIdx < visiblePosts.length - 1 ? visiblePosts[currentIdx + 1] : null;
+    const prevPost = currentIdx >= 0 && currentIdx < visiblePosts.length - 1 ? visiblePosts[currentIdx + 1] : null;
+    const nextPost = currentIdx > 0 ? visiblePosts[currentIdx - 1] : null;
     const detailAuthorId = resolveAuthorId(selectedPost.author);
 
     return (

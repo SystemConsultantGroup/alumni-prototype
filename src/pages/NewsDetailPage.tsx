@@ -11,8 +11,8 @@ const NewsDetailPage = () => {
   const item = NEWS_ITEMS.find((n) => n.id === id);
   const sameType = NEWS_ITEMS.filter((n) => n.type === item?.type);
   const currentIndex = sameType.findIndex((n) => n.id === id);
-  const prevItem = currentIndex > 0 ? sameType[currentIndex - 1] : null;
-  const nextItem = currentIndex < sameType.length - 1 ? sameType[currentIndex + 1] : null;
+  const prevItem = currentIndex < sameType.length - 1 ? sameType[currentIndex + 1] : null;
+  const nextItem = currentIndex > 0 ? sameType[currentIndex - 1] : null;
 
   if (!item) {
     return (

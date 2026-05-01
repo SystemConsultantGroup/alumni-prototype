@@ -255,8 +255,8 @@ const CommunityPage = () => {
   // === Business: post detail view ===
   if (tab === "business" && selectedPost) {
     const currentIdx = visibleCollabPosts.findIndex((p) => p.id === selectedPost.id);
-    const prevPost = currentIdx > 0 ? visibleCollabPosts[currentIdx - 1] : null;
-    const nextPost = currentIdx >= 0 && currentIdx < visibleCollabPosts.length - 1 ? visibleCollabPosts[currentIdx + 1] : null;
+    const prevPost = currentIdx >= 0 && currentIdx < visibleCollabPosts.length - 1 ? visibleCollabPosts[currentIdx + 1] : null;
+    const nextPost = currentIdx > 0 ? visibleCollabPosts[currentIdx - 1] : null;
     const detailAuthorId = resolveAuthorId(selectedPost.author);
 
     return (
