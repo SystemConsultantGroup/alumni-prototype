@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, User, ImageIcon, Send } from "lucide-react";
+import { ArrowLeft, Plus, User, ImageIcon, Send, EyeOff } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -15,9 +14,55 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { CLUBS, RESEARCH_GROUPS, type Club, type ClubPost } from "@/data/community";
+import { CLUBS, RESEARCH_GROUPS, type ClubPost } from "@/data/community";
 import { MEMBERS } from "@/data/members";
 import { toast } from "sonner";
+import ReportMenu from "@/components/ReportMenu";
+import { useReportStore, selectDeleted } from "@/data/reports";
+import { useBlockedAuthorIds, useIsAuthorNameBlocked } from "@/hooks/useBlockedAuthors";
+import { resolveAuthorId } from "@/lib/currentUser";
+
+const ClubPostCard = ({ post }: { post: ClubPost }) => {
+  const isBlocked = useIsAuthorNameBlocked(post.author);
+  const authorId = resolveAuthorId(post.author);
+
+  if (isBlocked) {
+    return (
+      <Card className="overflow-hidden bg-muted/30">
+        <CardContent className="p-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <EyeOff className="w-4 h-4 shrink-0" />
+          차단한 사용자의 게시물입니다
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="overflow-hidden">
+      <CardContent className="p-4">
+        <div className="flex items-start gap-2">
+          <h3 className="font-semibold text-foreground text-sm flex-1 line-clamp-1">
+            {post.title}
+          </h3>
+          {post.hasImage && (
+            <ImageIcon className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+          )}
+          <ReportMenu
+            targetKind="communityPost"
+            targetId={post.id}
+            targetSnapshot={{ title: post.title, content: post.content, authorName: post.author }}
+            reportedAuthorMemberId={authorId}
+            triggerSize="sm"
+          />
+        </div>
+        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.content}</p>
+        <p className="text-xs text-muted-foreground/70 mt-2">
+          {post.author} · {post.date}
+        </p>
+      </CardContent>
+    </Card>
+  );
+};
 
 const CommunityDetailPage = () => {
   const { id } = useParams();
@@ -28,10 +73,15 @@ const CommunityDetailPage = () => {
   const group = allGroups.find((g) => g.id === id);
 
   const [subTab, setSubTab] = useState<"intro" | "members" | "posts">("intro");
-  const [posts, setPosts] = useState<ClubPost[]>(group?.posts || []);
+  const [postsState, setPostsState] = useState<ClubPost[]>(group?.posts || []);
+  const deleted = useReportStore(selectDeleted);
+  const posts = postsState.filter(
+    (p) => !deleted.some((d) => d.targetKind === "communityPost" && d.targetId === p.id),
+  );
   const [showWriteDialog, setShowWriteDialog] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
+  const blockedIds = useBlockedAuthorIds();
 
   if (!group) {
     return (
@@ -44,7 +94,9 @@ const CommunityDetailPage = () => {
     );
   }
 
-  const groupMembers = MEMBERS.filter((m) => group.memberIds.includes(m.id));
+  const groupMembers = MEMBERS.filter(
+    (m) => group.memberIds.includes(m.id) && !blockedIds.has(m.id),
+  );
   const typeLabel = isResearch ? "발전연구회" : "취미동호회";
 
   const handleSubmitPost = () => {
@@ -60,7 +112,7 @@ const CommunityDetailPage = () => {
       author: "홍길동",
       hasImage: false,
     };
-    setPosts([newPost, ...posts]);
+    setPostsState([newPost, ...postsState]);
     setNewTitle("");
     setNewContent("");
     setShowWriteDialog(false);
@@ -149,24 +201,7 @@ const CommunityDetailPage = () => {
           {posts.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">등록된 게시글이 없습니다.</p>
           ) : (
-            posts.map((post) => (
-              <Card key={post.id} className="overflow-hidden">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-2">
-                    <h3 className="font-semibold text-foreground text-sm flex-1 line-clamp-1">
-                      {post.title}
-                    </h3>
-                    {post.hasImage && (
-                      <ImageIcon className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.content}</p>
-                  <p className="text-xs text-muted-foreground/70 mt-2">
-                    {post.author} · {post.date}
-                  </p>
-                </CardContent>
-              </Card>
-            ))
+            posts.map((post) => <ClubPostCard key={post.id} post={post} />)
           )}
 
           {/* FAB */}

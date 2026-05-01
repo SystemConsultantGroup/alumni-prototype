@@ -12,7 +12,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, ShieldAlert } from "lucide-react";
+import { COMMUNITY_GUIDELINE_LINE } from "@/lib/reportConstants";
 
 const STEPS = ["본인확인", "납부확인", "계정설정"];
 
@@ -97,6 +98,13 @@ const RegisterSetup = () => {
           {passwordMatch && (
             <p className="text-xs mt-1 text-primary font-medium">✓ 비밀번호가 일치합니다</p>
           )}
+        </div>
+
+        <div className="flex items-start gap-2 bg-muted/40 border border-border rounded-lg p-3">
+          <ShieldAlert className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {COMMUNITY_GUIDELINE_LINE} 가입을 완료하면 위 정책에 동의한 것으로 간주됩니다.
+          </p>
         </div>
 
         <Button type="submit" className="w-full" size="lg">

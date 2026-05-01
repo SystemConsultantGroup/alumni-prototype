@@ -34,6 +34,8 @@ import AdminApplications from "./pages/admin/AdminApplications";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminPosts from "./pages/admin/AdminPosts";
 import AdminCommunity from "./pages/admin/AdminCommunity";
+import AdminReports from "./pages/admin/AdminReports";
+import BlockedUsersPage from "./pages/BlockedUsersPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,6 +69,7 @@ const App = () => (
             <Route path="id-card" element={<IDCardPage />} />
             <Route path="benefits" element={<BenefitsPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="blocked" element={<BlockedUsersPage />} />
           </Route>
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
@@ -77,6 +80,7 @@ const App = () => (
             <Route path="payments" element={<AdminPayments />} />
             <Route path="news" element={<AdminPosts />} />
             <Route path="community" element={<AdminCommunity />} />
+            <Route path="reports" element={<AdminReports />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

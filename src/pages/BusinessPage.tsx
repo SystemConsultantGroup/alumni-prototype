@@ -46,6 +46,11 @@ import {
 } from "lucide-react";
 import { MEMBERS, FILTER_OPTIONS } from "@/data/members";
 import { toast } from "sonner";
+import ReportMenu from "@/components/ReportMenu";
+import { useReportStore, selectDeleted } from "@/data/reports";
+import { useIsAuthorNameBlocked } from "@/hooks/useBlockedAuthors";
+import { resolveAuthorId } from "@/lib/currentUser";
+import { EyeOff } from "lucide-react";
 
 const INDUSTRIES = [
   { name: "농업/광업/수산업/목축업", icon: Sprout },
@@ -86,12 +91,72 @@ const INDUSTRY_FILTER_LABELS: Record<IndustryFilterKey, string> = {
   region: "지역",
 };
 
+const CollabPostRow = ({
+  post,
+  onSelect,
+}: {
+  post: CollabPost;
+  onSelect: () => void;
+}) => {
+  const blocked = useIsAuthorNameBlocked(post.author);
+  const authorId = resolveAuthorId(post.author);
+
+  if (blocked) {
+    return (
+      <div className="bg-muted/30 border border-border rounded-xl p-4 flex items-center gap-2 text-sm text-muted-foreground">
+        <EyeOff className="w-4 h-4 shrink-0" />
+        차단한 사용자의 게시물입니다
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative bg-card border border-border rounded-xl overflow-hidden hover:shadow-md hover:border-primary/30 transition-all">
+      <button
+        type="button"
+        onClick={onSelect}
+        className="w-full text-left"
+      >
+        <div className="flex">
+          {post.hasThumbnail && (
+            <div className="w-24 h-24 md:w-32 md:h-28 bg-muted flex items-center justify-center shrink-0">
+              <Camera className="w-8 h-8 text-muted-foreground/40" />
+            </div>
+          )}
+          <div className="flex-1 p-4 min-w-0 pr-10">
+            <h3 className="font-semibold text-foreground text-sm md:text-base line-clamp-1">
+              {post.title}
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.preview}</p>
+            <p className="text-xs text-muted-foreground/70 mt-2">
+              {post.author} · {post.date}
+            </p>
+          </div>
+        </div>
+      </button>
+      <div className="absolute top-2 right-2">
+        <ReportMenu
+          targetKind="businessPost"
+          targetId={post.id}
+          targetSnapshot={{ title: post.title, content: post.body, authorName: post.author }}
+          reportedAuthorMemberId={authorId}
+          triggerSize="sm"
+        />
+      </div>
+    </div>
+  );
+};
+
 const BusinessPage = () => {
   const navigate = useNavigate();
   const [tab, setTab] = useState<"industry" | "collab">("industry");
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   const [collabPosts, setCollabPosts] = useState<CollabPost[]>(INITIAL_COLLAB_POSTS);
   const [selectedPost, setSelectedPost] = useState<CollabPost | null>(null);
+  const deleted = useReportStore(selectDeleted);
+  const visiblePosts = collabPosts.filter(
+    (p) => !deleted.some((d) => d.targetKind === "businessPost" && d.targetId === p.id),
+  );
   const [showWriteDialog, setShowWriteDialog] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
@@ -173,9 +238,10 @@ const BusinessPage = () => {
 
   // Post detail view
   if (selectedPost) {
-    const currentIdx = collabPosts.findIndex((p) => p.id === selectedPost.id);
-    const prevPost = currentIdx > 0 ? collabPosts[currentIdx - 1] : null;
-    const nextPost = currentIdx < collabPosts.length - 1 ? collabPosts[currentIdx + 1] : null;
+    const currentIdx = visiblePosts.findIndex((p) => p.id === selectedPost.id);
+    const prevPost = currentIdx > 0 ? visiblePosts[currentIdx - 1] : null;
+    const nextPost = currentIdx >= 0 && currentIdx < visiblePosts.length - 1 ? visiblePosts[currentIdx + 1] : null;
+    const detailAuthorId = resolveAuthorId(selectedPost.author);
 
     return (
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
@@ -186,9 +252,17 @@ const BusinessPage = () => {
           <ArrowLeft className="w-4 h-4" />
           협업 제안
         </button>
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-foreground">{selectedPost.title}</h1>
-          <p className="text-sm text-muted-foreground mt-2">{selectedPost.author} · {selectedPost.date}</p>
+        <div className="flex items-start gap-2">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl md:text-2xl font-bold text-foreground">{selectedPost.title}</h1>
+            <p className="text-sm text-muted-foreground mt-2">{selectedPost.author} · {selectedPost.date}</p>
+          </div>
+          <ReportMenu
+            targetKind="businessPost"
+            targetId={selectedPost.id}
+            targetSnapshot={{ title: selectedPost.title, content: selectedPost.body, authorName: selectedPost.author }}
+            reportedAuthorMemberId={detailAuthorId}
+          />
         </div>
         <hr className="border-border" />
         <div className="text-foreground text-sm md:text-base leading-relaxed whitespace-pre-line">
@@ -381,25 +455,8 @@ const BusinessPage = () => {
       {/* Collab tab */}
       {tab === "collab" && (
         <div className="space-y-3 relative">
-          {collabPosts.map((post) => (
-            <button
-              key={post.id}
-              onClick={() => setSelectedPost(post)}
-              className="w-full text-left bg-card border border-border rounded-xl overflow-hidden hover:shadow-md hover:border-primary/30 transition-all"
-            >
-              <div className="flex">
-                {post.hasThumbnail && (
-                  <div className="w-24 h-24 md:w-32 md:h-28 bg-muted flex items-center justify-center shrink-0">
-                    <Camera className="w-8 h-8 text-muted-foreground/40" />
-                  </div>
-                )}
-                <div className="flex-1 p-4 min-w-0">
-                  <h3 className="font-semibold text-foreground text-sm md:text-base line-clamp-1">{post.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.preview}</p>
-                  <p className="text-xs text-muted-foreground/70 mt-2">{post.author} · {post.date}</p>
-                </div>
-              </div>
-            </button>
+          {visiblePosts.map((post) => (
+            <CollabPostRow key={post.id} post={post} onSelect={() => setSelectedPost(post)} />
           ))}
 
           <button

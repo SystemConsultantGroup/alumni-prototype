@@ -7,8 +7,10 @@ import {
   CreditCard,
   Newspaper,
   MessageSquare,
+  Flag,
   LogOut,
 } from "lucide-react";
+import { selectPendingReportCount, useReportStore } from "@/data/reports";
 
 const menuItems = [
   { label: "대시보드", icon: LayoutDashboard, path: "/admin" },
@@ -17,13 +19,14 @@ const menuItems = [
   { label: "신규 신청 관리", icon: FileText, path: "/admin/applications" },
   { label: "기여금 관리", icon: CreditCard, path: "/admin/payments" },
   { label: "공지/뉴스 관리", icon: Newspaper, path: "/admin/news" },
-
   { label: "커뮤니티 관리", icon: MessageSquare, path: "/admin/community" },
+  { label: "신고 관리", icon: Flag, path: "/admin/reports" },
 ];
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const pendingReports = useReportStore(selectPendingReportCount);
 
   const isActive = (path: string) => {
     if (path === "/admin") return location.pathname === "/admin";
@@ -40,20 +43,28 @@ const AdminLayout = () => {
         </div>
 
         <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
-          {menuItems.map((item) => (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                isActive(item.path)
-                  ? "bg-primary text-primary-foreground font-medium"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
-            >
-              <item.icon className="w-4 h-4 shrink-0" />
-              {item.label}
-            </button>
-          ))}
+          {menuItems.map((item) => {
+            const showBadge = item.path === "/admin/reports" && pendingReports > 0;
+            return (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                  isActive(item.path)
+                    ? "bg-primary text-primary-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                <item.icon className="w-4 h-4 shrink-0" />
+                <span className="flex-1 text-left">{item.label}</span>
+                {showBadge && (
+                  <span className="bg-destructive text-destructive-foreground text-[10px] font-semibold rounded-full px-1.5 min-w-[18px] text-center leading-[18px]">
+                    {pendingReports}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </nav>
 
         <div className="p-2 border-t border-border">

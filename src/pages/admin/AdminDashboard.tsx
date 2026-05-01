@@ -3,14 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, CreditCard, AlertCircle, FileText } from "lucide-react";
-
-const stats = [
-  { label: "전체 회원 수", value: "156명", icon: Users, color: "text-primary" },
-  { label: "기여금 납부 완료", value: "98명", icon: CreditCard, color: "text-green-600" },
-  { label: "미납부 회원", value: "58명", icon: AlertCircle, color: "text-orange-500" },
-  { label: "신규 신청 대기", value: "3건", icon: FileText, color: "text-blue-500" },
-];
+import { Users, CreditCard, AlertCircle, FileText, Flag } from "lucide-react";
+import { selectPendingReportCount, useReportStore } from "@/data/reports";
 
 const recentApplications = [
   { name: "이수현", department: "경영학과", year: 2005, position: "이사", date: "2026.03.22" },
@@ -28,15 +22,30 @@ const recentPayments = [
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const pendingReports = useReportStore(selectPendingReportCount);
+
+  const stats = [
+    { label: "전체 회원 수", value: "156명", icon: Users, color: "text-primary", path: "/admin/members" },
+    { label: "기여금 납부 완료", value: "98명", icon: CreditCard, color: "text-green-600", path: "/admin/payments" },
+    { label: "미납부 회원", value: "58명", icon: AlertCircle, color: "text-orange-500", path: "/admin/payments" },
+    { label: "신규 신청 대기", value: "3건", icon: FileText, color: "text-blue-500", path: "/admin/applications" },
+    {
+      label: "미처리 신고",
+      value: `${pendingReports}건`,
+      icon: Flag,
+      color: pendingReports > 0 ? "text-destructive" : "text-muted-foreground",
+      path: "/admin/reports",
+    },
+  ];
 
   return (
     <div className="space-y-6 max-w-6xl">
       <h1 className="text-2xl font-bold text-foreground">대시보드</h1>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {stats.map((s) => (
-          <Card key={s.label}>
+          <Card key={s.label} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(s.path)}>
             <CardContent className="p-4 flex items-center gap-3">
               <div className={`w-10 h-10 rounded-lg bg-muted flex items-center justify-center ${s.color}`}>
                 <s.icon className="w-5 h-5" />

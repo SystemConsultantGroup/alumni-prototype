@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { Home, Users, Newspaper, MessageSquare, Briefcase, User, LogOut, Settings, ChevronDown } from "lucide-react";
+import { Home, Users, Newspaper, MessageSquare, User, LogOut, Settings, ChevronDown, UserX } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,6 +72,10 @@ const MainLayout = () => {
               <DropdownMenuItem onClick={() => navigate("/main/settings")}>
                 <Settings className="w-4 h-4 mr-2" />
                 앱 설정
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/main/blocked")}>
+                <UserX className="w-4 h-4 mr-2" />
+                차단 사용자 관리
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>

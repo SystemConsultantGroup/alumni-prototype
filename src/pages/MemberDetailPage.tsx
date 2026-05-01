@@ -1,15 +1,20 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Phone, Mail, MapPin, Briefcase, Globe, User, Heart } from "lucide-react";
+import { ArrowLeft, Phone, Mail, Briefcase, User, Heart, EyeOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { MEMBERS } from "@/data/members";
+import ReportMenu from "@/components/ReportMenu";
+import { useIsAuthorBlocked } from "@/hooks/useBlockedAuthors";
+import { removeBlock } from "@/data/reports";
+import { CURRENT_USER } from "@/lib/currentUser";
+import { toast } from "sonner";
 
 const MemberDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const member = MEMBERS.find((m) => m.id === id);
+  const blocked = useIsAuthorBlocked(member?.id ?? "");
 
   if (!member) {
     return (
@@ -22,13 +27,59 @@ const MemberDetailPage = () => {
     );
   }
 
+  if (blocked) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+        <button onClick={() => navigate("/main/members")} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="w-4 h-4" />
+          임원정보
+        </button>
+        <Card>
+          <CardContent className="p-12 text-center">
+            <EyeOff className="w-10 h-10 mx-auto mb-3 text-muted-foreground/40" />
+            <p className="text-foreground font-medium">차단한 사용자입니다</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              차단을 해제하면 프로필을 다시 볼 수 있습니다.
+            </p>
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => {
+                removeBlock(CURRENT_USER.id, member.id);
+                toast.success(`${member.name}님 차단을 해제했습니다`);
+              }}
+            >
+              차단 해제
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const isSelf = member.name === CURRENT_USER.name;
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
       {/* Back button */}
-      <button onClick={() => navigate("/main/members")} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="w-4 h-4" />
-        임원정보
-      </button>
+      <div className="flex items-center justify-between">
+        <button onClick={() => navigate("/main/members")} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="w-4 h-4" />
+          임원정보
+        </button>
+        {!isSelf && (
+          <ReportMenu
+            targetKind="memberProfile"
+            targetId={member.id}
+            targetSnapshot={{
+              title: `${member.name} 프로필`,
+              content: [member.prText, member.hobby, member.website].filter(Boolean).join(" / ") || "(추가 정보 없음)",
+              authorName: member.name,
+            }}
+            reportedAuthorMemberId={member.id}
+          />
+        )}
+      </div>
 
       {/* Profile header */}
       <div className="flex flex-col items-center text-center gap-3">

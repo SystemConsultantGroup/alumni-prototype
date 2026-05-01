@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sheet";
 import { MEMBERS, FILTER_OPTIONS, type Member } from "@/data/members";
 import { User } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useBlockedAuthorIds } from "@/hooks/useBlockedAuthors";
 
 type FilterKey = "generation" | "position" | "department" | "industry" | "region";
 
@@ -35,7 +35,7 @@ const positionOrder = FILTER_OPTIONS.position;
 
 const MembersPage = () => {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const blockedIds = useBlockedAuthorIds();
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"name" | "year">("name");
   const [activeFilters, setActiveFilters] = useState<Record<FilterKey, string[]>>({
@@ -85,6 +85,7 @@ const MembersPage = () => {
 
   const filtered = useMemo(() => {
     let result = MEMBERS.filter((m) => {
+      if (blockedIds.has(m.id)) return false;
       const q = search.trim().toLowerCase();
       if (q && !m.name.includes(q) && !m.department.toLowerCase().includes(q) && !String(m.admissionYear).includes(q)) {
         return false;
@@ -103,7 +104,7 @@ const MembersPage = () => {
     });
 
     return result;
-  }, [search, activeFilters, sortBy]);
+  }, [search, activeFilters, sortBy, blockedIds]);
 
   const FilterPills = () => (
     <div className="flex flex-wrap gap-2">
